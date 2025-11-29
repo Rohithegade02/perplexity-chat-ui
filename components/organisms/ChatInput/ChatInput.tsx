@@ -2,14 +2,20 @@
 
 import * as React from 'react'
 import ChatInputPresentation from './ChatInputPresentation'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
-const ChatInput = () => {
-    const [value, setValue] = React.useState('')
-    const contentEditableRef = React.useRef<HTMLDivElement>(null)
-    const isComposingRef = React.useRef(false)
+interface ChatInputProps {
+    onSubmit?: (message: string) => void
+    className?: string
+}
+
+const ChatInput = ({ onSubmit, className }: ChatInputProps) => {
+    const [value, setValue] = useState('')
+    const contentEditableRef = useRef<HTMLDivElement>(null)
+    const isComposingRef = useRef(false)
 
     // Sync React state to contentEditable
-    React.useEffect(() => {
+    useEffect(() => {
         if (
             contentEditableRef.current &&
             contentEditableRef.current.textContent !== value
@@ -25,11 +31,11 @@ const ChatInput = () => {
         }
     }, [])
 
-    const handleCompositionStart = React.useCallback(() => {
+    const handleCompositionStart = useCallback(() => {
         isComposingRef.current = true
     }, [])
 
-    const handleCompositionEnd = React.useCallback(() => {
+    const handleCompositionEnd = useCallback(() => {
         isComposingRef.current = false
         if (contentEditableRef.current) {
             const text = contentEditableRef.current.textContent || ''
@@ -37,18 +43,23 @@ const ChatInput = () => {
         }
     }, [])
 
-    const handleKeyDown = React.useCallback(
+    const handleKeyDown = useCallback(
         (e: React.KeyboardEvent<HTMLDivElement>) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault()
                 if (value.trim()) {
-                    // Handle submit logic here
-                    console.log('Submitting:', value)
+                    const message = value.trim()
                     setValue('')
+                    if (contentEditableRef.current) {
+                        contentEditableRef.current.textContent = ''
+                    }
+                    if (onSubmit) {
+                        onSubmit(message)
+                    }
                 }
             }
         },
-        [value]
+        [value, onSubmit]
     )
 
     return (
@@ -58,6 +69,7 @@ const ChatInput = () => {
             onCompositionStart={handleCompositionStart}
             onCompositionEnd={handleCompositionEnd}
             onKeyDown={handleKeyDown}
+            className={className}
         />
     )
 }

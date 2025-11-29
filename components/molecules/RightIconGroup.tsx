@@ -1,8 +1,8 @@
-import * as React from 'react'
 import { FiGlobe, FiCpu, FiPaperclip, FiMic, FiVolume2 } from 'react-icons/fi'
-import { IconButton } from './IconButton'
+import React from 'react'
+import { IconButton } from '@/components/atoms'
 
-export const RightIconGroup = () => {
+export const RightIconGroup = React.memo(() => {
   return (
     <div className="flex items-center gap-1.5">
       <IconButton
@@ -25,4 +25,4 @@ export const RightIconGroup = () => {
       />
     </div>
   )
-}
+})

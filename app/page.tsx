@@ -1,6 +1,4 @@
-import Chat from "@/components/common/Chat/Chat";
-import ChatInput from "@/components/common/ChatInput/ChatInput";
-import { Icon } from "@/components/svg/Icon";
+import { Chat } from "@/components/organisms";
 
 export default function Home() {
   return (

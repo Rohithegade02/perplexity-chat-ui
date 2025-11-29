@@ -1,14 +1,16 @@
 import * as React from 'react'
-import { LeftIconGroup } from './LeftIconGroup'
-import { RightIconGroup } from './RightIconGroup'
+import { LeftIconGroup, RightIconGroup } from '@/components/molecules'
+import { cn } from '@/lib/utils'
+import { RefObject } from 'react'
 
 interface ChatInputPresentationProps {
-    contentEditableRef: React.RefObject<HTMLDivElement | null>
+    contentEditableRef: RefObject<HTMLDivElement | null>
     onInput: () => void
     onCompositionStart: () => void
     onCompositionEnd: () => void
     onKeyDown: (e: React.KeyboardEvent<HTMLDivElement>) => void
     placeholder?: string
+    className?: string
 }
 
 const ChatInputPresentation = ({
@@ -17,10 +19,11 @@ const ChatInputPresentation = ({
     onCompositionStart,
     onCompositionEnd,
     onKeyDown,
+    className,
     placeholder = 'Ask anything. Type @ for mentions.',
 }: ChatInputPresentationProps) => {
     return (
-        <div className="relative w-full max-w-3xl">
+        <div className={cn(className, "relative max-w-3xl w-full")}>
             <div className="relative flex flex-col items-center gap-3 rounded-2xl border border-border bg-background px-2 pb-3.5 shadow-sm transition-shadow focus-within:shadow-md">
                 <div
                     ref={contentEditableRef}
