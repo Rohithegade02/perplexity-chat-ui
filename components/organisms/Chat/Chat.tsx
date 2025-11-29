@@ -30,6 +30,9 @@ const Chat = ({ onSubmit }: ChatProps) => {
     const currentAnswerIdRef = useRef<string | null>(null)
     const lastScrollTimeRef = useRef(0)
 
+    console.log(messages, 'messages');
+
+
     const scrollToBottom = useCallback(() => {
         if (scrollContainerRef.current && !isScrollingRef.current) {
             scrollContainerRef.current.scrollTo({
@@ -73,6 +76,8 @@ const Chat = ({ onSubmit }: ChatProps) => {
 
     const chatStream = useChatStream({
         onChunk: (chunk) => {
+            console.log('chunk', chunk);
+
             if (currentAnswerIdRef.current) {
                 setMessages((prev) =>
                     prev.map((msg) =>
