@@ -29,8 +29,8 @@ export const RelatedQueries = React.memo(({ queries, onQueryClick }: RelatedQuer
                         onClick={() => onQueryClick?.(query)}
                         className="w-full flex items-center gap-2 px-0 py-3 text-left text-sm text-muted-foreground hover:text-foreground transition-colors border-b border-border last:border-b-0 group"
                     >
-                        <div className="ml-xs duration-quick md:group-hover:text-super! inline-flex flex-none translate-y-px transition-all font-sans text-base font-medium text-foreground selection:bg-super/50 selection:text-foreground dark:selection:bg-super/10 dark:selection:text-super">
-                            <RiCornerDownRightLine />
+                        <div className="inline-flex flex-none items-center">
+                            <RiCornerDownRightLine className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                         </div>
                         <span className="flex-1">{query}</span>
                     </motion.button>
