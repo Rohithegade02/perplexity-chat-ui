@@ -1,6 +1,7 @@
 export interface ChatStreamResponse {
   answer: string
   sources: Array<{ title: string; url: string; name?: string }>
+  relatedQueries?: string[]
 }
 
 export interface ChatRequest {
@@ -173,6 +174,7 @@ export async function streamChatResponse(
     let buffer = ''
     let fullAnswer = ''
     let sources: Array<{ title: string; url: string; name?: string }> = []
+    let relatedQueries: string[] = []
 
     while (true) {
       const { done, value } = await reader.read()
@@ -207,14 +209,8 @@ export async function streamChatResponse(
             blocks?: ParsedBlock[]
             final_sse_message?: boolean
             status?: string
-          }
-
-          // Check if stream is complete
-          if (
-            parsed.final_sse_message === true ||
-            parsed.status === 'COMPLETED'
-          ) {
-            break
+            related_queries?: string[]
+            related_query_items?: Array<{ text: string; type?: string }>
           }
 
           // Extract answer from blocks
@@ -231,6 +227,35 @@ export async function streamChatResponse(
               sources = extractedSources
             }
           }
+
+          // Extract related queries (check both formats)
+          if (
+            parsed.related_query_items &&
+            Array.isArray(parsed.related_query_items)
+          ) {
+            relatedQueries = parsed.related_query_items.map((item) => item.text)
+            console.log(
+              '[streamChatResponse] Extracted related_query_items:',
+              relatedQueries
+            )
+          } else if (
+            parsed.related_queries &&
+            Array.isArray(parsed.related_queries)
+          ) {
+            relatedQueries = parsed.related_queries
+            console.log(
+              '[streamChatResponse] Extracted related_queries:',
+              relatedQueries
+            )
+          }
+
+          // Check if stream is complete AFTER processing data
+          if (
+            parsed.final_sse_message === true ||
+            parsed.status === 'COMPLETED'
+          ) {
+            break
+          }
         } catch {
           // Skip invalid JSON - might be partial data
           continue
@@ -246,7 +271,13 @@ export async function streamChatResponse(
           if (line.startsWith('data: ')) {
             const data = line.slice(6).trim()
             if (data && data !== '[DONE]' && data !== '{}') {
-              const parsed = JSON.parse(data) as { blocks?: ParsedBlock[] }
+              console.log('chat data', data)
+
+              const parsed = JSON.parse(data) as {
+                blocks?: ParsedBlock[]
+                related_queries?: string[]
+                related_query_items?: Array<{ text: string; type?: string }>
+              }
               if (parsed.blocks) {
                 const answer = extractAnswerFromBlocks(parsed.blocks)
                 if (answer) {
@@ -257,6 +288,29 @@ export async function streamChatResponse(
                 if (extractedSources.length > 0) {
                   sources = extractedSources
                 }
+              }
+
+              // Extract related queries from remaining buffer
+              if (
+                parsed.related_query_items &&
+                Array.isArray(parsed.related_query_items)
+              ) {
+                relatedQueries = parsed.related_query_items.map(
+                  (item) => item.text
+                )
+                console.log(
+                  '[streamChatResponse] Extracted related_query_items from buffer:',
+                  relatedQueries
+                )
+              } else if (
+                parsed.related_queries &&
+                Array.isArray(parsed.related_queries)
+              ) {
+                relatedQueries = parsed.related_queries
+                console.log(
+                  '[streamChatResponse] Extracted related_queries from buffer:',
+                  relatedQueries
+                )
               }
             }
           }
@@ -269,6 +323,7 @@ export async function streamChatResponse(
     onComplete({
       answer: fullAnswer,
       sources,
+      relatedQueries: relatedQueries.length > 0 ? relatedQueries : undefined,
     })
   } catch (error) {
     onError(

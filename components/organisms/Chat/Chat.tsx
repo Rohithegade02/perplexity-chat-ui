@@ -14,6 +14,7 @@ export interface Message {
     content: string
     isStreaming?: boolean
     sources?: Array<{ title: string; url: string }>
+    relatedQueries?: string[]
 }
 
 interface ChatProps {
@@ -111,6 +112,7 @@ const Chat = ({ onSubmit }: ChatProps) => {
                                 content: data.answer,
                                 isStreaming: false,
                                 sources: data.sources || [],
+                                relatedQueries: data.relatedQueries,
                             }
                             : msg
                     )
@@ -243,6 +245,8 @@ const Chat = ({ onSubmit }: ChatProps) => {
                                             id={message.id}
                                             isStreaming={message.isStreaming}
                                             sources={message.sources}
+                                            relatedQueries={message.relatedQueries}
+                                            onRelatedQueryClick={handleSubmit}
                                         />
                                     )}
                                 </motion.div>

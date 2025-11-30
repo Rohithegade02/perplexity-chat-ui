@@ -1,13 +1,15 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { memo, useEffect, useState } from 'react'
 import { SourceBadge } from '@/components/atoms'
-import { StreamingCursor } from '@/components/atoms'
+import { RelatedQueries } from './RelatedQueries'
 
 interface AnswerMessageProps {
     content: string
     id: string
     isStreaming?: boolean
     sources?: Array<{ title: string; url: string }>
+    relatedQueries?: string[]
+    onRelatedQueryClick?: (query: string) => void
 }
 
 // Convert markdown to HTML with table support
@@ -73,7 +75,7 @@ function renderTable(header: string[], rows: string[][]): string {
     if (!header || header.length === 0) return ''
 
     let html = '<div class="overflow-x-auto my-4"><table class="min-w-full border-collapse border border-border rounded-lg overflow-hidden">'
-    
+
     // Header
     html += '<thead><tr class="bg-muted/50">'
     header.forEach(cell => {
@@ -111,6 +113,8 @@ export const AnswerMessage = memo(({
     id,
     isStreaming = false,
     sources = [],
+    relatedQueries,
+    onRelatedQueryClick,
 }: AnswerMessageProps) => {
     const [displayedContent, setDisplayedContent] = useState('')
 
@@ -132,11 +136,11 @@ export const AnswerMessage = memo(({
             transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
             className="w-full max-w-3xl mx-auto px-4 py-6"
         >
-            <div 
+            <div
                 className="chat-message text-foreground text-base leading-relaxed prose prose-sm max-w-none dark:prose-invert"
                 dangerouslySetInnerHTML={{ __html: contentHtml }}
             />
-            
+
             {isStreaming && (
                 <motion.span
                     animate={{ opacity: [1, 0.3, 1] }}
@@ -150,7 +154,15 @@ export const AnswerMessage = memo(({
                     <SourceBadge sources={sources} />
                 )}
             </AnimatePresence>
+
+            {!isStreaming && relatedQueries && relatedQueries.length > 0 && (
+                <RelatedQueries
+                    queries={relatedQueries}
+                    onQueryClick={onRelatedQueryClick}
+                />
+            )}
         </motion.div>
     )
 })
 
+AnswerMessage.displayName = 'AnswerMessage'
