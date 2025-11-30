@@ -26,3 +26,4 @@ export const RightIconGroup = React.memo(() => {
     </div>
   )
 })
+RightIconGroup.displayName = 'RightIconGroup'

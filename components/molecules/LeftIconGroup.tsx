@@ -4,7 +4,7 @@ import { IconButton } from '@/components/atoms'
 
 export const LeftIconGroup = React.memo(() => {
     return (
-        <div className="flex items-center gap-0.5 rounded-lg border border-border bg-muted/30 px-1 py-1">
+        <div className="flex items-center gap-0.5 rounded-lg  bg-muted/30 px-1 py-1">
             <IconButton
                 icon={<FiSearch className="h-4 w-4" />}
                 isActive={true}
@@ -19,3 +19,4 @@ export const LeftIconGroup = React.memo(() => {
         </div>
     )
 })
+LeftIconGroup.displayName = 'LeftIconGroup'

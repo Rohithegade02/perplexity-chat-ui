@@ -207,9 +207,9 @@ const Chat = ({ onSubmit }: ChatProps) => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="flex flex-col items-center justify-center h-full"
+                            className="flex flex-col  items-center justify-center h-full"
                         >
-                            <div className="max-w-4xl mx-auto">
+                            <div className="max-w-4xl  mx-auto">
                                 <ChatInput className='max-w-3xl' onSubmit={handleSubmit} />
                             </div>
                         </motion.div>
